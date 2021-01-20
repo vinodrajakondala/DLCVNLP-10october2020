@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import List
 from starlette.responses import StreamingResponse
 from starlette.responses import FileResponse
-from fastapi.responses import FileResponse
+
 
 
 
@@ -41,7 +41,7 @@ async def create_upload_files(image: UploadFile = File(...)):
 
   # cfg.MODEL.WEIGHTS = os.path.join("/var/home_", "where model is saved")
   cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "/content/drive/MyDrive/testing/Instance_segmentation/model_final.pth")
-  #cfg.MODEL.WEIGHTS = '/content/drive/MyDrive/testing/Instance_segmentation/model_final.pth'
+
 
   classes_seg=['conveyor', 'Yard_ramp', 'ScissorLift', 'Platform_Trucks', 'In_Plant_Office','WirePartitions_Cages',
   'ForkLift', 'Storage_Rack', 'industrial_scale', 'Case_Sealer', 'packing table', 'stretch wrap machine']
@@ -51,18 +51,14 @@ async def create_upload_files(image: UploadFile = File(...)):
   v = Visualizer(img[:, :, ::-1],scale=0.8)
   out = v.draw_instance_predictions(outputs["instances"].to('cpu'))
   img_out = Image.fromarray(out.get_image()[:, :, ::-1])
-  # plt.figure(figsize = (14, 10))
-  # plt.imshow(cv2.cvtColor(v.get_image()[:, :, ::-1], cv2.COLOR_BGR2RGB))
-  # plt.show()
+
   prediction= outputs['instances'].pred_classes.numpy()
   dict_list= list(set(prediction))
   for name_ in dict_list:
     print('dict_ value.....', classes_seg[name_])
   cv2.imwrite(f'predicted_image/{image.filename}',out.get_image()[:, :, ::-1])
   return StreamingResponse(io.BytesIO(out.get_image()[:, :, ::-1].tobytes()), media_type="image/png")
-  #return FileResponse(io.BytesIO(out.get_image()[:, :, ::-1].tobytes()), media_type="image/jpeg")
-  #return Response(plt.imshow(out.get_image()))
-  #return Response(content=img, media_type="image/png")
+
 
 def _save_file_to_disk(uploaded_file, path=".", save_as="default"):
     extension = os.path.splitext(uploaded_file.filename)[-1]
