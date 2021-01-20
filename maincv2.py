@@ -56,8 +56,8 @@ async def create_upload_files(image: UploadFile = File(...)):
   # plt.show()
   prediction= outputs['instances'].pred_classes.numpy()
   dict_list= list(set(prediction))
-  # for name_ in dict_list:
-  #   print('dict_ value.....', dict_)
+  for name_ in dict_list:
+    print('dict_ value.....', classes_seg[name_])
   cv2.imwrite(f'predicted_image/{image.filename}',out.get_image()[:, :, ::-1])
   return StreamingResponse(io.BytesIO(out.get_image()[:, :, ::-1].tobytes()), media_type="image/png")
   #return FileResponse(io.BytesIO(out.get_image()[:, :, ::-1].tobytes()), media_type="image/jpeg")
